@@ -1,3 +1,5 @@
+![mcast1](./mcast1.png)
+
 # mcjoin
 
 `mcjoin` is a lightweight CLI tool for IPv4 multicast source and receiver management.
