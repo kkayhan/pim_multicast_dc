@@ -1,0 +1,139 @@
+name: multicast_dc
+prefix: ""
+topology:
+  defaults:
+    kind: nokia_srlinux
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:25.3.2
+    linux:
+      image: ghcr.io/srl-labs/network-multitool:sha-984d5ef
+  #########################################################
+  nodes:
+  #  spine1:
+  #    type: ixrd3l
+  #    startup-config: ./startup_configs/spine1.cfg
+  #    labels:
+  #      graph-posX: "555"
+  #      graph-posY: "65"
+  #      graph-groupLabelPos: bottom-center
+  #  spine2:
+  #    type: ixrd3l
+  #    startup-config: ./startup_configs/spine2.cfg
+  #    labels:
+  #      graph-posX: "635"
+  #      graph-posY: "65"
+  #      graph-groupLabelPos: bottom-center
+    leaf1:
+      type: ixrd2l
+      startup-config: ./startup_configs/leaf1.cfg
+      labels:
+        graph-posX: "495"
+        graph-posY: "195"
+        graph-groupLabelPos: bottom-center
+  #  leaf2:
+  #    type: ixrd2l
+  #    startup-config: ./startup_configs/leaf2.cfg
+  #    labels:
+  #      graph-posX: "545"
+  #      graph-posY: "195"
+  #      graph-groupLabelPos: bottom-center
+  #  leaf3:
+  #    type: ixrd2l
+  #    startup-config: ./startup_configs/leaf3.cfg
+  #    labels:
+  #      graph-posX: "645"
+  #      graph-posY: "195"
+  #      graph-groupLabelPos: bottom-center
+  #  leaf4:
+  #    type: ixrd2l
+  #    startup-config: ./startup_configs/leaf4.cfg
+  #    labels:
+  #      graph-posX: "695"
+  #      graph-posY: "195"
+  #      graph-groupLabelPos: bottom-center
+    #########################################################
+    rts1:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 up
+        - sudo ip addr add 10.1.1.1/30 dev eth1
+        - sudo ip route add default via 10.1.1.2
+      labels:
+        graph-posX: "385"
+        graph-posY: "195"
+        graph-groupLabelPos: bottom-center
+    he1:
+      type: ixrd2l
+      startup-config: ./startup_configs/he1.cfg
+      labels:
+        graph-posX: "485"
+        graph-posY: "265"
+        graph-groupLabelPos: bottom-center
+  #  he2:
+  #    type: ixrd2l
+  #    startup-config: ./startup_configs/he2.cfg
+  #    labels:
+  #      graph-posX: "545"
+  #      graph-posY: "255"
+  #      graph-groupLabelPos: bottom-center
+  #  r1:
+  #    type: ixrd2l
+  #    startup-config: ./startup_configs/r1.cfg
+  #    labels:
+  #      graph-posX: "645"
+  #      graph-posY: "255"
+  #      graph-groupLabelPos: bottom-center
+#
+    source1:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 up
+        - sudo ip addr add 192.168.100.2/30 dev eth1
+        - sudo ip route add default via 192.168.100.1
+      labels:
+        graph-posX: "485"
+        graph-posY: "335"
+        graph-groupLabelPos: bottom-center
+  #  source2:
+  #    kind: linux
+  #    #mgmt-ipv4: 10.58.2.34
+  #    labels:
+  #      graph-posX: "545"
+  #      graph-posY: "335"
+  #      graph-groupLabelPos: bottom-center
+  #  source3:
+  #    kind: linux
+  #    #mgmt-ipv4: 10.58.2.34
+  #    labels:
+  #      graph-posX: "645"
+  #      graph-posY: "325"
+  #      graph-groupLabelPos: bottom-center
+
+  links:
+    # Spine1 - Leaf
+   # - endpoints: [ "spine1:e1-1", "leaf1:e1-49" ]
+   # - endpoints: [ "spine1:e1-2", "leaf2:e1-49" ]
+   # - endpoints: [ "spine1:e1-3", "leaf3:e1-49" ]
+   # - endpoints: [ "spine1:e1-4", "leaf4:e1-49" ]
+   # # Spine2 - Leaf
+   # - endpoints: [ "spine2:e1-1", "leaf1:e1-50" ]
+   # - endpoints: [ "spine2:e1-2", "leaf2:e1-50" ]
+   # - endpoints: [ "spine2:e1-3", "leaf3:e1-50" ]
+   # - endpoints: [ "spine2:e1-4", "leaf4:e1-50" ]
+
+    ### Access ###
+    # Encryption Servers to Leaf1 & 2
+    - endpoints: [ "rts1:eth1", "leaf1:e1-1" ]
+
+    # he1-Leaf1 // he2-Leaf2 // r1-Leaf3
+    - endpoints: [ "he1:e1-2", "leaf1:e1-2" ]
+  #  - endpoints: [ "he2:e1-2", "leaf2:e1-2" ]
+  #  - endpoints: [ "r1:e1-2", "leaf3:e1-2" ]
+
+    # source
+    - endpoints: [ "source1:eth1", "he1:e1-1" ]
+  #  - endpoints: [ "source2:eth1", "he2:e1-1" ]
+  #  - endpoints: [ "source3:eth1", "r1:e1-1" ]
