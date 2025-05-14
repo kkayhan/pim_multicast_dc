@@ -1,9 +1,0 @@
-*
-# Ignore everything
-*
-# But not these files/directories:
-!.gitignore
-!README.md
-!pim_multicast_dc.clab.yaml
-!startup_configs/
-!startup_configs/**
