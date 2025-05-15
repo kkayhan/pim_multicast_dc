@@ -53,17 +53,6 @@ topology:
   #      graph-posY: "195"
   #      graph-groupLabelPos: bottom-center
     #########################################################
-    rts1:
-      kind: linux
-      exec:
-        - sudo ip link set eth0 down
-        - sudo ip link set eth1 up
-        - sudo ip addr add 10.1.1.1/30 dev eth1
-        - sudo ip route add default via 10.1.1.2
-      labels:
-        graph-posX: "385"
-        graph-posY: "195"
-        graph-groupLabelPos: bottom-center
     he1:
       type: ixrd2l
       startup-config: ./startup_configs/he1.cfg
@@ -86,6 +75,18 @@ topology:
   #      graph-posY: "255"
   #      graph-groupLabelPos: bottom-center
 #
+    rts1:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 up
+        - sudo ip addr add 10.1.1.1/30 dev eth1
+        - sudo ip route add default via 10.1.1.2
+        - mcjoin -d -i eth1 192.168.100.2,234.0.0.1
+      labels:
+        graph-posX: "385"
+        graph-posY: "195"
+        graph-groupLabelPos: bottom-center
     source1:
       kind: linux
       exec:
@@ -93,6 +94,7 @@ topology:
         - sudo ip link set eth1 up
         - sudo ip addr add 192.168.100.2/30 dev eth1
         - sudo ip route add default via 192.168.100.1
+        - mcjoin -d -s -i eth1 234.0.0.1
       labels:
         graph-posX: "485"
         graph-posY: "335"
