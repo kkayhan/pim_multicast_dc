@@ -94,7 +94,7 @@ topology:
         - sudo ip link set eth1 up
         - sudo ip addr add 192.168.100.2/30 dev eth1
         - sudo ip route add default via 192.168.100.1
-        - mcjoin -d -t 10 -s -i eth1 234.0.0.1
+        - mcjoin -d -t 20 -s -i eth1 234.0.0.1
       labels:
         graph-posX: "485"
         graph-posY: "335"
