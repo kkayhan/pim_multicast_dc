@@ -10,132 +10,184 @@ topology:
       image: ghcr.io/srl-labs/network-multitool:sha-984d5ef
   #########################################################
   nodes:
-  #  spine1:
-  #    type: ixrd3l
-  #    startup-config: ./startup_configs/spine1.cfg
-  #    labels:
-  #      graph-posX: "555"
-  #      graph-posY: "65"
-  #      graph-groupLabelPos: bottom-center
-  #  spine2:
-  #    type: ixrd3l
-  #    startup-config: ./startup_configs/spine2.cfg
-  #    labels:
-  #      graph-posX: "635"
-  #      graph-posY: "65"
-  #      graph-groupLabelPos: bottom-center
+    spine1:
+      type: ixrd3l
+      startup-config: ./startup_configs/spine1.cfg
+      labels:
+        graph-posX: "705"
+        graph-posY: "205"
+        graph-groupLabelPos: bottom-center
+    spine2:
+      type: ixrd3l
+      startup-config: ./startup_configs/spine2.cfg
+      labels:
+        graph-posX: "705"
+        graph-posY: "155"
+        graph-groupLabelPos: bottom-center
     leaf1:
       type: ixrd2l
       startup-config: ./startup_configs/leaf1.cfg
+      binds:
+        - ./startup_configs/pps_monitor.py:/etc/opt/srlinux/eventmgr/pps_monitor.py
       labels:
-        graph-posX: "495"
-        graph-posY: "195"
+        graph-posX: "635"
+        graph-posY: "125"
         graph-groupLabelPos: bottom-center
-  #  leaf2:
-  #    type: ixrd2l
-  #    startup-config: ./startup_configs/leaf2.cfg
-  #    labels:
-  #      graph-posX: "545"
-  #      graph-posY: "195"
-  #      graph-groupLabelPos: bottom-center
-  #  leaf3:
-  #    type: ixrd2l
-  #    startup-config: ./startup_configs/leaf3.cfg
-  #    labels:
-  #      graph-posX: "645"
-  #      graph-posY: "195"
-  #      graph-groupLabelPos: bottom-center
-  #  leaf4:
-  #    type: ixrd2l
-  #    startup-config: ./startup_configs/leaf4.cfg
-  #    labels:
-  #      graph-posX: "695"
-  #      graph-posY: "195"
-  #      graph-groupLabelPos: bottom-center
+    leaf2:
+      type: ixrd2l
+      startup-config: ./startup_configs/leaf2.cfg
+      binds:
+        - ./startup_configs/pps_monitor.py:/etc/opt/srlinux/eventmgr/pps_monitor.py
+      labels:
+        graph-posX: "635"
+        graph-posY: "235"
+        graph-groupLabelPos: bottom-center
+    leaf3:
+      type: ixrd2l
+      startup-config: ./startup_configs/leaf3.cfg
+      labels:
+        graph-posX: "775"
+        graph-posY: "125"
+        graph-groupLabelPos: bottom-center
+    leaf4:
+      type: ixrd2l
+      startup-config: ./startup_configs/leaf4.cfg
+      labels:
+        graph-posX: "775"
+        graph-posY: "235"
+        graph-groupLabelPos: bottom-center
     #########################################################
+    duplicator:
+      type: ixrd2l
+      startup-config: ./startup_configs/duplicator.cfg
+      labels:
+        graph-posX: "515"
+        graph-posY: "175"
+        graph-groupLabelPos: bottom-center
     he1:
       type: ixrd2l
       startup-config: ./startup_configs/he1.cfg
       labels:
-        graph-posX: "485"
-        graph-posY: "265"
+        graph-posX: "565"
+        graph-posY: "125"
         graph-groupLabelPos: bottom-center
-  #  he2:
-  #    type: ixrd2l
-  #    startup-config: ./startup_configs/he2.cfg
-  #    labels:
-  #      graph-posX: "545"
-  #      graph-posY: "255"
-  #      graph-groupLabelPos: bottom-center
-  #  r1:
-  #    type: ixrd2l
-  #    startup-config: ./startup_configs/r1.cfg
-  #    labels:
-  #      graph-posX: "645"
-  #      graph-posY: "255"
-  #      graph-groupLabelPos: bottom-center
-#
+    he2:
+      type: ixrd2l
+      startup-config: ./startup_configs/he2.cfg
+      labels:
+        graph-posX: "565"
+        graph-posY: "235"
+        graph-groupLabelPos: bottom-center
+    #########################################################
+    r1:
+      type: ixrd2l
+      startup-config: ./startup_configs/r1.cfg
+      labels:
+        graph-posX: "845"
+        graph-posY: "125"
+        graph-groupLabelPos: bottom-center
+    r2:
+      type: ixrd2l
+      startup-config: ./startup_configs/r2.cfg
+      labels:
+        graph-posX: "845"
+        graph-posY: "235"
+        graph-groupLabelPos: bottom-center
+    #########################################################
     rts1:
       kind: linux
       exec:
         - sudo ip link set eth0 down
-        - sudo ip link set eth1 up
-        - sudo ip addr add 10.1.1.1/30 dev eth1
-        - sudo ip route add default via 10.1.1.2
-      #  - mcjoin -d -t 10 -i eth1 192.168.100.2,234.0.0.1
+        ### vlan1 ###
+        - sudo ip link add link eth1 name eth1.1 type vlan id 1
+        - sudo ip link set dev eth1.1 up
+        - sudo ip addr add 10.1.1.1/30 dev eth1.1
+        ### vlan2 ###
+        - sudo ip link add link eth1 name eth1.2 type vlan id 2
+        - sudo ip link set dev eth1.2 up
+        - sudo ip addr add 10.55.0.1/30 dev eth1.2
+        #########
+        - mcjoin -d -i eth1.1 234.0.0.1
+      # - mcjoin -d -s -t 20 -i eth1.2 238.0.0.1
       labels:
-        graph-posX: "385"
-        graph-posY: "195"
+        graph-posX: "635"
+        graph-posY: "65"
         graph-groupLabelPos: bottom-center
-    source1:
+    rts2:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        ### vlan1 ###
+        - sudo ip link add link eth1 name eth1.1 type vlan id 1
+        - sudo ip link set dev eth1.1 up
+        - sudo ip addr add 10.2.2.1/30 dev eth1.1
+        ### vlan2 ###
+        - sudo ip link add link eth1 name eth1.2 type vlan id 2
+        - sudo ip link set dev eth1.2 up
+        - sudo ip addr add 10.55.0.1/24 dev eth1.2
+        #########
+        - mcjoin -d -i eth1.1 234.0.0.1
+      #  - mcjoin -d -s -t 20 -i eth1.2 238.0.0.1
+      labels:
+        graph-posX: "635"
+        graph-posY: "295"
+        graph-groupLabelPos: bottom-center
+    #########################################################
+    source:
       kind: linux
       exec:
         - sudo ip link set eth0 down
         - sudo ip link set eth1 up
-        - sudo ip addr add 192.168.100.2/30 dev eth1
-        - sudo ip route add default via 192.168.100.1
+        - sudo ip addr add 192.168.100.3/24 dev eth1
         - mcjoin -d -t 20 -s -i eth1 234.0.0.1
       labels:
-        graph-posX: "485"
-        graph-posY: "335"
+        graph-posX: "445"
+        graph-posY: "175"
         graph-groupLabelPos: bottom-center
-  #  source2:
-  #    kind: linux
-  #    #mgmt-ipv4: 10.58.2.34
-  #    labels:
-  #      graph-posX: "545"
-  #      graph-posY: "335"
-  #      graph-groupLabelPos: bottom-center
-  #  source3:
-  #    kind: linux
-  #    #mgmt-ipv4: 10.58.2.34
-  #    labels:
-  #      graph-posX: "645"
-  #      graph-posY: "325"
-  #      graph-groupLabelPos: bottom-center
-
+    client:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 up
+        - sudo ip addr add 192.168.1.2/30 dev eth1
+        - mcjoin -d -i eth1 10.55.0.1,238.0.0.1
+        - sudo ip link set eth2 up
+        - sudo ip addr add 192.168.2.2/30 dev eth2
+        - mcjoin -d -i eth2 10.55.0.1,238.0.0.1
+      labels:
+        graph-posX: "885"
+        graph-posY: "185"
+        graph-groupLabelPos: bottom-center
+  #########################################################
   links:
     # Spine1 - Leaf
-   # - endpoints: [ "spine1:e1-1", "leaf1:e1-49" ]
-   # - endpoints: [ "spine1:e1-2", "leaf2:e1-49" ]
-   # - endpoints: [ "spine1:e1-3", "leaf3:e1-49" ]
-   # - endpoints: [ "spine1:e1-4", "leaf4:e1-49" ]
-   # # Spine2 - Leaf
-   # - endpoints: [ "spine2:e1-1", "leaf1:e1-50" ]
-   # - endpoints: [ "spine2:e1-2", "leaf2:e1-50" ]
-   # - endpoints: [ "spine2:e1-3", "leaf3:e1-50" ]
-   # - endpoints: [ "spine2:e1-4", "leaf4:e1-50" ]
+    - endpoints: [ "spine1:e1-1", "leaf1:e1-49" ]
+    - endpoints: [ "spine1:e1-2", "leaf2:e1-49" ]
+    - endpoints: [ "spine1:e1-3", "leaf3:e1-49" ]
+    - endpoints: [ "spine1:e1-4", "leaf4:e1-49" ]
+    # Spine2 - Leaf
+    - endpoints: [ "spine2:e1-1", "leaf1:e1-50" ]
+    - endpoints: [ "spine2:e1-2", "leaf2:e1-50" ]
+    - endpoints: [ "spine2:e1-3", "leaf3:e1-50" ]
+    - endpoints: [ "spine2:e1-4", "leaf4:e1-50" ]
 
     ### Access ###
-    # Encryption Servers to Leaf1 & 2
+    # Encryption Servers (RTS)
     - endpoints: [ "rts1:eth1", "leaf1:e1-1" ]
-
-    # he1-Leaf1 // he2-Leaf2 // r1-Leaf3
+    - endpoints: [ "rts2:eth1", "leaf2:e1-1" ]
+    # he1&he2 towards DC
     - endpoints: [ "he1:e1-2", "leaf1:e1-2" ]
-  #  - endpoints: [ "he2:e1-2", "leaf2:e1-2" ]
-  #  - endpoints: [ "r1:e1-2", "leaf3:e1-2" ]
+    - endpoints: [ "he2:e1-2", "leaf2:e1-2" ]
 
-    # source
-    - endpoints: [ "source1:eth1", "he1:e1-1" ]
-  #  - endpoints: [ "source2:eth1", "he2:e1-1" ]
-  #  - endpoints: [ "source3:eth1", "r1:e1-1" ]
+    ### R1&R2 towards DC
+    - endpoints: [ "r1:e1-2", "leaf3:e1-2" ]
+    - endpoints: [ "r2:e1-2", "leaf4:e1-2" ]
+
+    # source to duplicator and duplicator to he1 & he2
+    - endpoints: [ "source:eth1", "duplicator:e1-1" ]
+    - endpoints: [ "duplicator:e1-2", "he1:e1-1" ]
+    - endpoints: [ "duplicator:e1-3", "he2:e1-1" ]
+
+    # client to r1 & r2
+    - endpoints: [ "client:eth1", "r1:e1-1" ]
+    - endpoints: [ "client:eth2", "r2:e1-1" ]
