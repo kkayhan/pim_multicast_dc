@@ -15,14 +15,14 @@ topology:
       startup-config: ./startup_configs/spine1.cfg
       labels:
         graph-posX: "705"
-        graph-posY: "205"
+        graph-posY: "135"
         graph-groupLabelPos: bottom-center
     spine2:
       type: ixrd3l
       startup-config: ./startup_configs/spine2.cfg
       labels:
         graph-posX: "705"
-        graph-posY: "155"
+        graph-posY: "195"
         graph-groupLabelPos: bottom-center
     leaf1:
       type: ixrd2l
@@ -30,8 +30,8 @@ topology:
       binds:
         - ./startup_configs/pps_monitor.py:/etc/opt/srlinux/eventmgr/pps_monitor.py
       labels:
-        graph-posX: "635"
-        graph-posY: "125"
+        graph-posX: "605"
+        graph-posY: "92"
         graph-groupLabelPos: bottom-center
     leaf2:
       type: ixrd2l
@@ -39,59 +39,59 @@ topology:
       binds:
         - ./startup_configs/pps_monitor.py:/etc/opt/srlinux/eventmgr/pps_monitor.py
       labels:
-        graph-posX: "635"
-        graph-posY: "235"
+        graph-posX: "630"
+        graph-posY: "258"
         graph-groupLabelPos: bottom-center
     leaf3:
       type: ixrd2l
       startup-config: ./startup_configs/leaf3.cfg
       labels:
-        graph-posX: "775"
-        graph-posY: "125"
+        graph-posX: "785"
+        graph-posY: "85"
         graph-groupLabelPos: bottom-center
     leaf4:
       type: ixrd2l
       startup-config: ./startup_configs/leaf4.cfg
       labels:
-        graph-posX: "775"
-        graph-posY: "235"
+        graph-posX: "815"
+        graph-posY: "245"
         graph-groupLabelPos: bottom-center
     #########################################################
     duplicator:
       type: ixrd2l
       startup-config: ./startup_configs/duplicator.cfg
       labels:
-        graph-posX: "515"
-        graph-posY: "175"
+        graph-posX: "404"
+        graph-posY: "203"
         graph-groupLabelPos: bottom-center
     he1:
       type: ixrd2l
       startup-config: ./startup_configs/he1.cfg
       labels:
-        graph-posX: "565"
-        graph-posY: "125"
+        graph-posX: "475"
+        graph-posY: "135"
         graph-groupLabelPos: bottom-center
     he2:
       type: ixrd2l
       startup-config: ./startup_configs/he2.cfg
       labels:
-        graph-posX: "565"
-        graph-posY: "235"
+        graph-posX: "505"
+        graph-posY: "255"
         graph-groupLabelPos: bottom-center
     #########################################################
     r1:
       type: ixrd2l
       startup-config: ./startup_configs/r1.cfg
       labels:
-        graph-posX: "845"
-        graph-posY: "125"
+        graph-posX: "955"
+        graph-posY: "145"
         graph-groupLabelPos: bottom-center
     r2:
       type: ixrd2l
       startup-config: ./startup_configs/r2.cfg
       labels:
-        graph-posX: "845"
-        graph-posY: "235"
+        graph-posX: "955"
+        graph-posY: "195"
         graph-groupLabelPos: bottom-center
     #########################################################
     rts1:
@@ -110,8 +110,8 @@ topology:
         - mcjoin -d -i eth1.1 234.0.0.1
       # - mcjoin -d -s -t 20 -i eth1.2 238.0.0.1
       labels:
-        graph-posX: "635"
-        graph-posY: "65"
+        graph-posX: "605"
+        graph-posY: "25"
         graph-groupLabelPos: bottom-center
     rts2:
       kind: linux
@@ -130,7 +130,7 @@ topology:
       #  - mcjoin -d -s -t 20 -i eth1.2 238.0.0.1
       labels:
         graph-posX: "635"
-        graph-posY: "295"
+        graph-posY: "325"
         graph-groupLabelPos: bottom-center
     #########################################################
     source:
@@ -141,8 +141,8 @@ topology:
         - sudo ip addr add 192.168.100.3/24 dev eth1
         - mcjoin -d -t 20 -s -i eth1 234.0.0.1
       labels:
-        graph-posX: "445"
-        graph-posY: "175"
+        graph-posX: "335"
+        graph-posY: "205"
         graph-groupLabelPos: bottom-center
     client:
       kind: linux
@@ -155,8 +155,42 @@ topology:
         - sudo ip addr add 192.168.2.2/30 dev eth2
         - mcjoin -d -i eth2 10.55.0.1,238.0.0.1
       labels:
-        graph-posX: "885"
+        graph-posX: "1015"
+        graph-posY: "175"
+        graph-groupLabelPos: bottom-center
+    evpn_client_1:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 down
+        - sudo ip link set eth2 down
+        - sudo ip link add bond0 type bond
+        - sudo ip link set eth1 master bond0
+        - sudo ip link set eth2 master bond0
+        - sudo ip link set eth1 up
+        - sudo ip link set eth2 up
+        - sudo ip link set bond0 up
+        - sudo ip addr add 100.99.98.1/24 dev bond0
+      labels:
+        graph-posX: "525"
         graph-posY: "185"
+        graph-groupLabelPos: bottom-center
+    evpn_client_2:
+      kind: linux
+      exec:
+        - sudo ip link set eth0 down
+        - sudo ip link set eth1 down
+        - sudo ip link set eth2 down
+        - sudo ip link add bond0 type bond
+        - sudo ip link set eth1 master bond0
+        - sudo ip link set eth2 master bond0
+        - sudo ip link set eth1 up
+        - sudo ip link set eth2 up
+        - sudo ip link set bond0 up
+        - sudo ip addr add 100.99.98.2/24 dev bond0
+      labels:
+        graph-posX: "865"
+        graph-posY: "165"
         graph-groupLabelPos: bottom-center
   #########################################################
   links:
@@ -191,3 +225,9 @@ topology:
     # client to r1 & r2
     - endpoints: [ "client:eth1", "r1:e1-1" ]
     - endpoints: [ "client:eth2", "r2:e1-1" ]
+
+    # evpn client to leaves
+    - endpoints: [ "evpn_client_1:eth1", "leaf1:e1-10" ]
+    - endpoints: [ "evpn_client_1:eth2", "leaf2:e1-10" ]
+    - endpoints: [ "evpn_client_2:eth1", "leaf3:e1-10" ]
+    - endpoints: [ "evpn_client_2:eth2", "leaf4:e1-10" ]
