@@ -1,4 +1,4 @@
-![mcast1](./mcast1.png)
+![mcast1](./pim_lab.png)
 
 # mcjoin
 
