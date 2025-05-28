@@ -23,6 +23,43 @@ Leaf1 and Leaf2 have event-handler scripts monitoring multicast ingress from RTS
 * Clients on the right join `238.0.0.1` using Source Specific Multicast (SSM) towards RTS1/RTS2.
 * Original source-to-RTS traffic uses Any Source Multicast (ASM), with head-end 1 and 2 as Rendezvous Points (RPs).
 
+### Useful Commands for SRLinux
+```bash
+show network-instance default protocols bgp neighbor
+```
+
+```bash
+show network-instance default protocols bgp neighbor
+```
+
+```bash
+show network-instance vrflite_multicast protocols ospf neighbor
+```
+
+```bash
+show network-instance vrflite_multicast protocols pim neighbor
+```
+
+```bash
+show network-instance vrflite_multicast protocols pim database
+```
+
+```bash
+show network-instance vrflite_multicast protocols pim database detail
+```
+
+```bash
+show network-instance vrflite_multicast protocols igmp group
+```
+
+```bash
+show network-instance vrflite_multicast route-table
+```
+
+```bash
+info from state system event-handler instance pps_monitor
+```
+
 ## mcjoin Utility
 
 `mcjoin` is a minimal CLI utility for simulating multicast sources and receivers.

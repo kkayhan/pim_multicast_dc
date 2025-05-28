@@ -170,27 +170,11 @@ topology:
         - sudo ip link set eth1 up
         - sudo ip link set eth2 up
         - sudo ip link set bond0 up
-        - sudo ip addr add 100.99.98.1/24 dev bond0
+        - sudo ip addr add 100.99.98.2/24 dev bond0
+        - sudo ip route add default via 100.99.98.1
       labels:
         graph-posX: "525"
         graph-posY: "185"
-        graph-groupLabelPos: bottom-center
-    evpn_client_2:
-      kind: linux
-      exec:
-        - sudo ip link set eth0 down
-        - sudo ip link set eth1 down
-        - sudo ip link set eth2 down
-        - sudo ip link add bond0 type bond
-        - sudo ip link set eth1 master bond0
-        - sudo ip link set eth2 master bond0
-        - sudo ip link set eth1 up
-        - sudo ip link set eth2 up
-        - sudo ip link set bond0 up
-        - sudo ip addr add 100.99.98.2/24 dev bond0
-      labels:
-        graph-posX: "865"
-        graph-posY: "165"
         graph-groupLabelPos: bottom-center
   #########################################################
   links:
@@ -229,5 +213,3 @@ topology:
     # evpn client to leaves
     - endpoints: [ "evpn_client_1:eth1", "leaf1:e1-10" ]
     - endpoints: [ "evpn_client_1:eth2", "leaf2:e1-10" ]
-    - endpoints: [ "evpn_client_2:eth1", "leaf3:e1-10" ]
-    - endpoints: [ "evpn_client_2:eth2", "leaf4:e1-10" ]
